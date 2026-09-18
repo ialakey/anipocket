@@ -178,7 +178,6 @@ gitignore, ключ никуда не уезжает с вашей машины 
 |---|---|
 | `ANDROID_KEYSTORE_BASE64` | `base64 -w0 android/release.jks` |
 | `ANDROID_KEYSTORE_PASSWORD` | Пароль хранилища |
-| `ANDROID_KEY_ALIAS` | `anipocket` |
 | `ANDROID_KEY_PASSWORD` | Пароль ключа |
 
 Сохраните `.jks` в надёжном месте. Потеряете — Android будет считать любое

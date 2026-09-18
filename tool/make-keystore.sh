@@ -54,12 +54,11 @@ EOF
 echo
 echo "Wrote $KEYSTORE and $PROPERTIES (both gitignored)."
 echo
-echo "Now add four repository secrets — Settings -> Secrets and variables -> Actions,"
+echo "Now add three repository secrets — Settings -> Secrets and variables -> Actions,"
 echo "or with the gh CLI:"
 echo
 echo "  base64 -w0 $KEYSTORE | gh secret set ANDROID_KEYSTORE_BASE64"
 echo "  gh secret set ANDROID_KEYSTORE_PASSWORD"
-echo "  gh secret set ANDROID_KEY_ALIAS      # value: $ALIAS"
 echo "  gh secret set ANDROID_KEY_PASSWORD"
 echo
 echo "After that, tagging a commit builds and publishes a signed release:"

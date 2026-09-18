@@ -179,7 +179,6 @@ repository secrets to create:
 |---|---|
 | `ANDROID_KEYSTORE_BASE64` | `base64 -w0 android/release.jks` |
 | `ANDROID_KEYSTORE_PASSWORD` | The keystore password |
-| `ANDROID_KEY_ALIAS` | `anipocket` |
 | `ANDROID_KEY_PASSWORD` | The key password |
 
 Back the `.jks` up somewhere safe. Losing it means Android will refuse every
