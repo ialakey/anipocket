@@ -28,7 +28,7 @@ val storeFilePath = signingValue("storeFile", "ANDROID_KEYSTORE_PATH")
 val hasReleaseKey = storeFilePath != null && file(storeFilePath).exists()
 
 android {
-    namespace = "com.mobileanime.mobile_anime"
+    namespace = "io.github.ialakey.anipocket"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -38,7 +38,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.mobileanime.mobile_anime"
+        applicationId = "io.github.ialakey.anipocket"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION

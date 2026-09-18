@@ -4,9 +4,9 @@ library;
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_anime/anime/sources/animedia_site.dart';
-import 'package:mobile_anime/anime/sources/animego.dart';
-import 'package:mobile_anime/core/errors.dart';
+import 'package:anipocket/anime/sources/animedia_site.dart';
+import 'package:anipocket/anime/sources/animego.dart';
+import 'package:anipocket/core/errors.dart';
 
 import 'fake_http.dart';
 

@@ -8,7 +8,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:mobile_anime/core/http.dart';
+import 'package:anipocket/core/http.dart';
 
 /// Что вернуть на запрос.
 class FakeRoute {

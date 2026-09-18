@@ -112,7 +112,7 @@ library is pulled in.
 
 ### `lib/data` — local state
 
-`AppDatabase` opens `mobile_anime.db` (schema version 1) with three tables:
+`AppDatabase` opens `anipocket.db` (schema version 1) with three tables:
 
 ```sql
 watchlist(source, anime_id, title, poster_url, status, rating,

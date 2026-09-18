@@ -111,7 +111,7 @@ html-библиотека не подключается.
 
 ### `lib/data` — локальное состояние
 
-`AppDatabase` открывает `mobile_anime.db` (версия схемы 1) с тремя таблицами:
+`AppDatabase` открывает `anipocket.db` (версия схемы 1) с тремя таблицами:
 
 ```sql
 watchlist(source, anime_id, title, poster_url, status, rating,

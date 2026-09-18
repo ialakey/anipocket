@@ -4,15 +4,15 @@ library;
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_anime/core/errors.dart';
-import 'package:mobile_anime/services/downloader.dart';
+import 'package:anipocket/core/errors.dart';
+import 'package:anipocket/services/downloader.dart';
 
 import 'fake_http.dart';
 
 void main() {
   late Directory temp;
 
-  setUp(() => temp = Directory.systemTemp.createTempSync('mobile_anime_test'));
+  setUp(() => temp = Directory.systemTemp.createTempSync('anipocket_test'));
   tearDown(() => temp.deleteSync(recursive: true));
 
   String path(String name) => '${temp.path}${Platform.pathSeparator}$name';

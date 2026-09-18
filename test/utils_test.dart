@@ -4,9 +4,9 @@ library;
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_anime/anime/models.dart';
-import 'package:mobile_anime/core/errors.dart';
-import 'package:mobile_anime/core/utils.dart';
+import 'package:anipocket/anime/models.dart';
+import 'package:anipocket/core/errors.dart';
+import 'package:anipocket/core/utils.dart';
 
 void main() {
   group('Шифр Цезаря и ссылки Kodik', () {

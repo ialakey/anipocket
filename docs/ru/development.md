@@ -118,7 +118,7 @@ flutter build appbundle             # AAB для Play Store
 (`android/app/build.gradle.kts`), чтобы работал `flutter run --release`. Перед
 распространением `signingConfig` надо заменить.
 
-Идентификатор приложения — `com.mobileanime.mobile_anime`.
+Идентификатор приложения — `io.github.ialakey.anipocket`.
 
 ## Управление приложением на эмуляторе
 
@@ -126,7 +126,7 @@ flutter build appbundle             # AAB для Play Store
 
 ```bash
 adb install -r -t build/app/outputs/flutter-apk/app-debug.apk
-adb shell am start -n com.mobileanime.mobile_anime/.MainActivity
+adb shell am start -n io.github.ialakey.anipocket/.MainActivity
 adb exec-out screencap -p > shot.png
 adb shell cmd uimode night yes          # тёмная тема
 adb shell input tap <x> <y>

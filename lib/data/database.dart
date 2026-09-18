@@ -12,7 +12,7 @@ class AppDatabase {
   static const int _version = 1;
 
   static Future<AppDatabase> open() async {
-    final path = p.join(await getDatabasesPath(), 'mobile_anime.db');
+    final path = p.join(await getDatabasesPath(), 'anipocket.db');
     final database = await openDatabase(
       path,
       version: _version,

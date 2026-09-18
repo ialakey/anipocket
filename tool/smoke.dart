@@ -10,9 +10,9 @@ library;
 
 import 'dart:io';
 
-import 'package:mobile_anime/anime/catalog.dart';
-import 'package:mobile_anime/anime/models.dart';
-import 'package:mobile_anime/core/errors.dart';
+import 'package:anipocket/anime/catalog.dart';
+import 'package:anipocket/anime/models.dart';
+import 'package:anipocket/core/errors.dart';
 
 Future<void> main(List<String> args) async {
   final query = args.isNotEmpty && !args.first.startsWith('--')

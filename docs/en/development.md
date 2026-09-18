@@ -120,7 +120,7 @@ Release builds are currently signed with the debug keystore
 (`android/app/build.gradle.kts`) so that `flutter run --release` works out of the
 box. Replace `signingConfig` before distributing anything.
 
-The application id is `com.mobileanime.mobile_anime`.
+The application id is `io.github.ialakey.anipocket`.
 
 ## Driving the app on an emulator
 
@@ -128,7 +128,7 @@ Useful when capturing screenshots or reproducing a report:
 
 ```bash
 adb install -r -t build/app/outputs/flutter-apk/app-debug.apk
-adb shell am start -n com.mobileanime.mobile_anime/.MainActivity
+adb shell am start -n io.github.ialakey.anipocket/.MainActivity
 adb exec-out screencap -p > shot.png
 adb shell cmd uimode night yes          # dark theme
 adb shell input tap <x> <y>

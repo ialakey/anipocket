@@ -4,16 +4,16 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_anime/anime/models.dart';
-import 'package:mobile_anime/anime/players/anilibria.dart';
-import 'package:mobile_anime/anime/players/animedia.dart';
-import 'package:mobile_anime/anime/players/aniboom.dart';
-import 'package:mobile_anime/anime/players/base.dart';
-import 'package:mobile_anime/anime/players/cvh.dart';
-import 'package:mobile_anime/anime/players/kodik.dart';
-import 'package:mobile_anime/anime/players/sibnet.dart';
-import 'package:mobile_anime/anime/players/vk.dart';
-import 'package:mobile_anime/core/errors.dart';
+import 'package:anipocket/anime/models.dart';
+import 'package:anipocket/anime/players/anilibria.dart';
+import 'package:anipocket/anime/players/animedia.dart';
+import 'package:anipocket/anime/players/aniboom.dart';
+import 'package:anipocket/anime/players/base.dart';
+import 'package:anipocket/anime/players/cvh.dart';
+import 'package:anipocket/anime/players/kodik.dart';
+import 'package:anipocket/anime/players/sibnet.dart';
+import 'package:anipocket/anime/players/vk.dart';
+import 'package:anipocket/core/errors.dart';
 
 import 'fake_http.dart';
 
