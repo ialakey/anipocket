@@ -22,21 +22,25 @@ jobs:
     name: Build, sign and publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
           fetch-depth: 0
 
       - name: Resolve version from the tag
         id: version
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
         run: |
-          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          set -eu
+          TAG="${INPUT_TAG:-${GITHUB_REF_NAME}}"
           NAME="${TAG#v}"
-          echo "tag=$TAG"                       >> "$GITHUB_OUTPUT"
-          echo "name=$NAME"                     >> "$GITHUB_OUTPUT"
-          echo "build=${GITHUB_RUN_NUMBER}"     >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG"                   >> "$GITHUB_OUTPUT"
+          echo "name=$NAME"                 >> "$GITHUB_OUTPUT"
+          echo "build=${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
           echo "Releasing $TAG (version $NAME, build $GITHUB_RUN_NUMBER)"
 
+      # Fail here rather than three minutes later, and name what is missing.
       - name: Require signing secrets
         env:
           KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -45,17 +49,17 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           missing=""
-          [ -n "$KEYSTORE" ]       || missing="$missing ANDROID_KEYSTORE_BASE64"
-          [ -n "$STORE_PASSWORD" ] || missing="$missing ANDROID_KEYSTORE_PASSWORD"
-          [ -n "$KEY_ALIAS" ]      || missing="$missing ANDROID_KEY_ALIAS"
-          [ -n "$KEY_PASSWORD" ]   || missing="$missing ANDROID_KEY_PASSWORD"
+          [ -n "${KEYSTORE:-}" ]       || missing="$missing ANDROID_KEYSTORE_BASE64"
+          [ -n "${STORE_PASSWORD:-}" ] || missing="$missing ANDROID_KEYSTORE_PASSWORD"
+          [ -n "${KEY_ALIAS:-}" ]      || missing="$missing ANDROID_KEY_ALIAS"
+          [ -n "${KEY_PASSWORD:-}" ]   || missing="$missing ANDROID_KEY_PASSWORD"
           if [ -n "$missing" ]; then
             echo "::error::Missing repository secrets:$missing"
-            echo "::error::Create them with tool/make-keystore.sh — see docs/en/development.md#releases"
+            echo "::error::Create them with tool/make-keystore.sh - see docs/en/development.md#releases"
             exit 1
           fi
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
@@ -76,7 +80,8 @@ jobs:
         env:
           KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo "$KEYSTORE" | base64 -d > "${RUNNER_TEMP}/release.jks"
+          set -eu
+          printf '%s' "$KEYSTORE" | base64 -d > "${RUNNER_TEMP}/release.jks"
           echo "ANDROID_KEYSTORE_PATH=${RUNNER_TEMP}/release.jks" >> "$GITHUB_ENV"
 
       - name: Build signed APKs
@@ -84,82 +89,70 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          VERSION: ${{ steps.version.outputs.name }}
+          BUILD: ${{ steps.version.outputs.build }}
         run: |
-          flutter build apk --release \
-            --build-name "${{ steps.version.outputs.name }}" \
-            --build-number "${{ steps.version.outputs.build }}"
-          flutter build apk --release --split-per-abi \
-            --build-name "${{ steps.version.outputs.name }}" \
-            --build-number "${{ steps.version.outputs.build }}"
+          set -eu
+          flutter build apk --release --build-name "$VERSION" --build-number "$BUILD"
+          flutter build apk --release --split-per-abi --build-name "$VERSION" --build-number "$BUILD"
 
       - name: Collect and name the artifacts
-        id: artifacts
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
         run: |
           set -eu
           mkdir -p dist
-          V="${{ steps.version.outputs.name }}"
           src=build/app/outputs/flutter-apk
-          cp "$src/app-release.apk"             "dist/anipocket-$V-universal.apk"
-          cp "$src/app-arm64-v8a-release.apk"   "dist/anipocket-$V-arm64-v8a.apk"
-          cp "$src/app-armeabi-v7a-release.apk" "dist/anipocket-$V-armeabi-v7a.apk"
-          cp "$src/app-x86_64-release.apk"      "dist/anipocket-$V-x86_64.apk"
-          cd dist && sha256sum ./*.apk > SHA256SUMS.txt
+          cp "$src/app-release.apk"             "dist/anipocket-$VERSION-universal.apk"
+          cp "$src/app-arm64-v8a-release.apk"   "dist/anipocket-$VERSION-arm64-v8a.apk"
+          cp "$src/app-armeabi-v7a-release.apk" "dist/anipocket-$VERSION-armeabi-v7a.apk"
+          cp "$src/app-x86_64-release.apk"      "dist/anipocket-$VERSION-x86_64.apk"
+          cd dist
+          sha256sum ./*.apk > SHA256SUMS.txt
           cat SHA256SUMS.txt
 
-      - name: Verify the APKs really are signed with our key
+      # If the keystore secret had silently failed to apply, Gradle would have
+      # fallen back to the debug key and shipped an unpublishable APK. Catch it.
+      - name: Verify the APKs carry the release signature
         run: |
           set -eu
           BUILD_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
           for apk in dist/*.apk; do
             echo "== $apk"
-            "$BUILD_TOOLS/apksigner" verify --print-certs "$apk" | tee /tmp/certs.txt
-            # A debug-signed APK would mean the keystore secret never got picked up.
+            "$BUILD_TOOLS/apksigner" verify --print-certs "$apk" > /tmp/certs.txt
+            cat /tmp/certs.txt
             if grep -qi "CN=Android Debug" /tmp/certs.txt; then
               echo "::error::$apk is signed with the debug key, not the release key"
               exit 1
             fi
           done
 
-      # Binds every artifact to this exact commit, workflow and runner, signed
-      # through Sigstore. Anyone can check a download against the source with:
-      #   gh attestation verify <file>.apk -R ${{ github.repository }}
+      # Binds every artifact to this exact commit, workflow file and runner,
+      # signed through Sigstore rather than by a person. A hand-built APK cannot
+      # be swapped into the release and still verify:
+      #   gh attestation verify <file>.apk -R <owner>/<repo>
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: 'dist/*.apk'
 
+      # Published with the pre-installed gh CLI rather than a third-party action:
+      # one less party handling signed artifacts on their way out.
       - name: Publish the release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.tag }}
-          generate_release_notes: true
-          fail_on_unmatched_files: true
-          files: |
-            dist/*.apk
-            dist/SHA256SUMS.txt
-          body: |
-            ## Install
-
-            Grab **`anipocket-${{ steps.version.outputs.name }}-arm64-v8a.apk`** — that is
-            the right build for essentially every phone made in the last decade. Take the
-            `universal` one if you are not sure; it is bigger but runs everywhere.
-
-            Android will ask you to allow installing from an unknown source. There is no
-            Play Store build: the app has no accounts and no server, and nothing to sell.
-
-            ## Verify what you downloaded
-
-            Every APK here is signed with the project release key **and** carries a
-            Sigstore provenance attestation binding it to commit
-            [`${{ github.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            and to the workflow run that produced it. Nothing was built or uploaded by hand.
-
-            ```bash
-            # the build really came from this repository, at this commit
-            gh attestation verify anipocket-${{ steps.version.outputs.name }}-arm64-v8a.apk \
-              -R ${{ github.repository }}
-
-            # the bytes match what the workflow published
-            sha256sum -c SHA256SUMS.txt --ignore-missing
-            ```
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          set -eu
+          sed -e "s|@VERSION@|${VERSION}|g" \
+              -e "s|@SHA@|${GITHUB_SHA}|g" \
+              -e "s|@REPO@|${GITHUB_REPOSITORY}|g" \
+              .github/release-notes.md > "${RUNNER_TEMP}/notes.md"
+          cat "${RUNNER_TEMP}/notes.md"
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
+            --notes-file "${RUNNER_TEMP}/notes.md" \
+            --generate-notes \
+            dist/*.apk dist/SHA256SUMS.txt
