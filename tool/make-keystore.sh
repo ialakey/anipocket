@@ -45,7 +45,7 @@ keytool -genkeypair \
   -dname "CN=AniPocket, OU=, O=, L=, S=, C="
 
 cat > "$PROPERTIES" <<EOF
-storeFile=$(cd android && pwd)/release.jks
+storeFile=release.jks
 storePassword=$STORE_PASSWORD
 keyAlias=$ALIAS
 keyPassword=$STORE_PASSWORD

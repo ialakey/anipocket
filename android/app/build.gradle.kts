@@ -1,3 +1,4 @@
+import java.io.File
 import java.util.Properties
 
 plugins {
@@ -24,8 +25,21 @@ val keystoreProperties = Properties().apply {
 fun signingValue(propertyKey: String, envKey: String): String? =
     keystoreProperties.getProperty(propertyKey) ?: System.getenv(envKey)
 
-val storeFilePath = signingValue("storeFile", "ANDROID_KEYSTORE_PATH")
-val hasReleaseKey = storeFilePath != null && file(storeFilePath).exists()
+// A relative storeFile is resolved against android/, so key.properties stays
+// portable. CI passes an absolute path instead and is used as given. Anything
+// else — a shell-style /d/... path from Git Bash, say — would not resolve here,
+// and silently falling back to the debug key is exactly the trap this avoids.
+val releaseKeystore: File? = signingValue("storeFile", "ANDROID_KEYSTORE_PATH")
+    ?.takeIf { it.isNotBlank() }
+    ?.let { path ->
+        val candidate = File(path)
+        if (candidate.isAbsolute) candidate else rootProject.file(path)
+    }
+val hasReleaseKey = releaseKeystore?.exists() == true
+
+if (releaseKeystore != null && !hasReleaseKey) {
+    logger.warn("Release keystore configured but not found at ${releaseKeystore.absolutePath}")
+}
 
 android {
     namespace = "io.github.ialakey.anipocket"
@@ -52,7 +66,7 @@ android {
     signingConfigs {
         if (hasReleaseKey) {
             create("release") {
-                storeFile = file(storeFilePath!!)
+                storeFile = releaseKeystore!!
                 storePassword = signingValue("storePassword", "ANDROID_KEYSTORE_PASSWORD")
                 keyAlias = signingValue("keyAlias", "ANDROID_KEY_ALIAS")
                 keyPassword = signingValue("keyPassword", "ANDROID_KEY_PASSWORD")
