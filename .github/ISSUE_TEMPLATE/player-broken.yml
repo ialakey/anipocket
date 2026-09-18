@@ -1,0 +1,99 @@
+name: A player or the catalog stopped working
+description: Search returns nothing, a title will not open, or an episode will not play
+title: "[broken] "
+labels: [broken-parser]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        These sites change their markup without warning, and when they do the
+        parser here breaks. That is the single most common issue in this project,
+        so there is a template for it.
+
+        The fix is almost always one regular expression, and the report below is
+        what makes it a five-minute fix instead of an afternoon.
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it break?
+      options:
+        - Search returns an error or nothing
+        - A title page will not load
+        - The episode list is empty or wrong
+        - An episode will not play
+        - An episode will not download
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: Catalog source
+      options: [AnimeGO, Animedia, "Both", "Not sure"]
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: players
+    attributes:
+      label: Which players did you try?
+      description: The chips under "Dub and player" on the title page.
+      options:
+        - label: Aniboom
+        - label: Kodik
+        - label: CVH
+        - label: Sibnet
+        - label: Animedia
+        - label: AniLibria
+        - label: VK Video
+
+  - type: textarea
+    id: message
+    attributes:
+      label: The exact error text
+      description: Copy it from the screen — the wording names what failed.
+      placeholder: "Не удалось найти ссылку на видео — плеер, скорее всего, сменил вёрстку."
+    validations:
+      required: true
+
+  - type: textarea
+    id: smoke
+    attributes:
+      label: Output of the live check
+      description: |
+        Optional but the most useful thing you can attach — it shows whether the
+        break is at the source or at a player.
+      value: |
+        <details><summary>dart run tool/smoke.dart "<title>"</summary>
+
+        ```
+        paste here
+        ```
+
+        </details>
+      render: markdown
+
+  - type: input
+    id: title
+    attributes:
+      label: A title that reproduces it
+      placeholder: "Наруто: Ураганные хроники"
+
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: The release you installed, or the commit you built from.
+      placeholder: v1.0.0
+
+  - type: checkboxes
+    id: tried
+    attributes:
+      label: Before filing
+      options:
+        - label: I tried a different dub or player and it still fails
+          required: true
+        - label: I tried clearing the catalog cache in Settings
+          required: true
+        - label: I tried a mirror, a proxy, or the other source

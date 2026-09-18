@@ -1,0 +1,16 @@
+# Normalise to LF in the repository; check out native on Windows.
+* text=auto eol=lf
+
+# Runs on the CI runners — CRLF here would break the shebang.
+*.sh text eol=lf
+gradlew text eol=lf
+
+*.bat text eol=crlf
+
+*.png binary
+*.jpg binary
+*.jks binary
+*.keystore binary
+
+# Saved player responses: byte-exact fixtures, never touch them.
+test/fixtures/** -text

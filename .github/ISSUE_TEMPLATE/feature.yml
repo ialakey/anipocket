@@ -1,0 +1,26 @@
+name: Idea
+description: Suggest something the app should do
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Worth knowing up front: this app has no server and no accounts, on
+        purpose. Anything needing a backend — watch-together rooms, sync between
+        devices, push notifications about new episodes — is out of scope here and
+        lives in [anime-watch-together](https://github.com/ialakey/anime-watch-together).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The problem, not the solution you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like it to do?
+    validations:
+      required: true

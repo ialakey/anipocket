@@ -1,0 +1,38 @@
+name: mobile_anime
+description: "Аниме на телефоне: смотреть и скачивать без регистрации"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # сеть: заголовки, прокси, потоковые ответы для скачивания
+  dio: ^5.7.0
+  # html-сущности в ответах сайтов (&quot;, &#039;, ...)
+  html_unescape: ^2.0.0
+
+  # состояние и локальное хранилище «кабинета»
+  provider: ^6.1.2
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  path_provider: ^2.1.4
+  shared_preferences: ^2.3.2
+
+  # просмотр
+  video_player: ^2.9.2
+  wakelock_plus: ^1.2.8
+  cached_network_image: ^3.4.1
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

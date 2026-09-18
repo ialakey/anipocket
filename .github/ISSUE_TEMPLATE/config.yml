@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Something broke after a site changed
+    url: https://github.com/ialakey/anipocket/issues/new?template=player-broken.yml
+    about: Search, a title page or a player stopped working — use this one, it is the common case.
