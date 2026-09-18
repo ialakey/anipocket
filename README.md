@@ -1,3 +1,5 @@
+<img src="docs/icon.png" width="88" align="right" alt="AniPocket">
+
 # AniPocket
 
 **Watch and download anime on your phone. No account, no server.**

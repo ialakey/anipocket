@@ -189,6 +189,25 @@ naming the ones it is missing, rather than quietly shipping a debug-signed APK.
 A local `flutter build apk --release` on a fresh clone still works — it falls
 back to the debug key and says so in the build log.
 
+## The app icon
+
+The launcher icon is generated, not hand-exported:
+
+```bash
+python tool/make-icon.py
+```
+
+`tool/make-icon.py` draws the mark — a pocket with a play triangle cut out of it
+— once, and emits every asset from that single geometry: the legacy and round
+PNGs, the adaptive background/foreground pair, the Android 13 monochrome layer,
+all fifteen iOS sizes and `docs/icon.png`.
+
+The one thing to know if you change it: an adaptive icon's layers are 108dp, but
+a launcher crops to the **central 72dp** and masks that. Art sized against the
+full 108dp looks fine in a preview and gets clipped on a real home screen, so
+`foreground()` sizes the mark against the 72dp that actually shows. Use
+`adaptive_preview()` to check — it crops the way a launcher does.
+
 ## Adding a player
 
 1. Create `lib/anime/players/<name>.dart` extending `BasePlayer`; implement
