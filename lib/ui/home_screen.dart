@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Аниме'),
+        title: const Text('AniPocket'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),

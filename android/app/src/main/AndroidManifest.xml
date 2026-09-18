@@ -4,7 +4,7 @@
     <!-- Часть CDN до сих пор отдаёт видео по http -->
 
     <application
-        android:label="Аниме"
+        android:label="AniPocket"
         android:usesCleartextTraffic="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

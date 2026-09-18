@@ -18,7 +18,7 @@ class MobileAnimeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsStore>();
     return MaterialApp(
-      title: 'Аниме',
+      title: 'AniPocket',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(Brightness.light),
       darkTheme: buildTheme(Brightness.dark),
