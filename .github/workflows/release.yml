@@ -124,7 +124,7 @@ jobs:
       # through Sigstore. Anyone can check a download against the source with:
       #   gh attestation verify <file>.apk -R ${{ github.repository }}
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: 'dist/*.apk'
 
