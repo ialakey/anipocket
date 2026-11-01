@@ -20,7 +20,7 @@ dependencies:
   sqflite: ^2.3.3
   path: ^1.9.0
   path_provider: ^2.1.4
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.5.6
 
   # просмотр
   video_player: ^2.9.2
