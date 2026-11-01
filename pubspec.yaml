@@ -24,7 +24,7 @@ dependencies:
 
   # просмотр
   video_player: ^2.9.2
-  wakelock_plus: ^1.2.8
+  wakelock_plus: ^1.8.2
   cached_network_image: ^4.0.0
 
   cupertino_icons: ^1.0.8
